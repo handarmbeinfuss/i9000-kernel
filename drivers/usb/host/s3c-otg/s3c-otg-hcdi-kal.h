@@ -50,17 +50,17 @@ extern	volatile 	u8 *		g_pUDCBase;
 extern 	struct		usb_hcd*	g_pUsbHcd;
 
 
-#if defined(__linux__)
+//#if defined(__linux__)
 
 #include <linux/spinlock.h>
 #define		SPINLOCK_t			spinlock_t
 #define 	SPIN_LOCK_INIT		SPIN_LOCK_UNLOCKED
 
-#else
+//#else
 
-#error Not supported OS
+//#error Not supported OS
 
-#endif
+//#endif
 
 #define		spin_lock_otg(lock)			spin_lock(lock)
 #define 	spin_lock_irg_otg(lock)			spin_lock_irq(lock)	

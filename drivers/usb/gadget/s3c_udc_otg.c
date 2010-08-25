@@ -22,6 +22,9 @@
  */
 
 #include "s3c_udc.h"
+
+#include "usb_cable_notifier.h"
+
 #include <linux/platform_device.h>
 #include <linux/clk.h>
 #include <mach/map.h>
@@ -156,7 +159,7 @@ static void set_max_pktsize(struct s3c_udc *dev, enum usb_device_speed speed);
 static void nuke(struct s3c_ep *ep, int status);
 static int s3c_udc_set_halt(struct usb_ep *_ep, int value);
 static void udc_reinit(struct s3c_udc *dev);
-int BOOTUP = 1; // Booting ÁßÀÎÁö ¾Æ´ÑÁö ÆÇ´ÜÇÏ´Â º¯¼ö, connectivity_switching_init ÀÌ ºÒ¸° ÈÄ¿¡ 0·Î ¼¼ÆÃ.
+extern int BOOTUP = 1; // Booting ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½, connectivity_switching_init ï¿½ï¿½ ï¿½Ò¸ï¿½ ï¿½Ä¿ï¿½ 0ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 
 
 
@@ -353,7 +356,7 @@ int usb_gadget_register_driver(struct usb_gadget_driver *driver)
 
 EXPORT_SYMBOL(usb_gadget_register_driver);
 
-int s3c_usb_cable(int connected)
+int s3c_usb_cable_phy(int connected)
 {
 	unsigned long flags;
 	struct s3c_udc *dev = the_controller;
@@ -379,7 +382,13 @@ int s3c_usb_cable(int connected)
 
 	return 0;
 }
-EXPORT_SYMBOL(s3c_usb_cable);
+EXPORT_SYMBOL(s3c_usb_cable_phy);
+
+static struct usb_cable_notify s3c_usb_cable_phy_reg = {
+        .handler = s3c_usb_cable_phy
+};
+
+
 
 /*
   Unregister entry point for the peripheral controller driver.
@@ -1249,6 +1258,7 @@ static struct platform_driver s3c_udc_driver = {
 static int __init udc_init(void)
 {
 	int ret;
+	usb_cable_notify_register(&s3c_usb_cable_phy_reg);
 
 	ret = platform_driver_register(&s3c_udc_driver);
 	if(!ret)
@@ -1262,6 +1272,7 @@ static int __init udc_init(void)
 
 static void __exit udc_exit(void)
 {
+	usb_cable_notify_unregister(&s3c_usb_cable_phy_reg);
 	platform_driver_unregister(&s3c_udc_driver);
 	printk("Unloaded %s version %s\n", driver_name, DRIVER_VERSION);
 }

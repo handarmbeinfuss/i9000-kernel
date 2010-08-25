@@ -43,6 +43,8 @@ g_cdc-objs			:= cdc2.o
 # below is support DM-remove_rndis-add_mtp-add
 g_android-objs			:= adb_ums_acm_mtp_rndis.o f_adb.o f_mass_storage.o u_serial.o f_acm.o serial_acm.o u_ether.o	rndis.o	f_rndis.o	f_mtp.o fsa9480_i2c.o composite.o $(C_UTILS)
 
+g_android-objs			+= usb_cable_notifier.o
+
 obj-$(CONFIG_USB_ZERO)		+= g_zero.o
 obj-$(CONFIG_USB_ETH)		+= g_ether.o
 obj-$(CONFIG_USB_GADGETFS)	+= gadgetfs.o

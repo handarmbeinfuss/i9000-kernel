@@ -1,0 +1,12 @@
+config USB_S3C_OTG_HOST
+	tristate "S3C OTG HCD support"
+	depends on USB
+	help
+	  S5PC110 USB chips are dual-role
+	  host/peripheral/OTG USB controllers.
+
+	  Enable this option to support this chip in host controller mode.
+	  If unsure, say N.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called s3c_otg_hcd.
