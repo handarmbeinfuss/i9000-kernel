@@ -534,6 +534,7 @@ unsigned int charging_mode_get(void)
 {
 	return s3c_bat_info.charging_mode_booting;
 }
+EXPORT_SYMBOL(charging_mode_get);
 #endif
 
 

@@ -557,6 +557,14 @@ config USB_GADGET_DUALSPEED
 	  Means that gadget drivers should include extra descriptors
 	  and code to handle dual-speed controllers.
 
+
+config USB_CABLEHANDLING
+	bool "Do cable handling"
+	default y
+	help
+	  Jack sensing and charging stuff.
+
+
 #
 # USB Gadget Drivers
 #

@@ -9,7 +9,7 @@
 
 
 int BOOTUP = 1; // Booting ������ �ƴ��� �Ǵ��ϴ� ����, connectivity_switching_init �� �Ҹ� �Ŀ� 0�� ����.
-
+EXPORT_SYMBOL(BOOTUP);
 
 static struct usb_cable_notify *notify_list=NULL;
 
@@ -30,6 +30,7 @@ void usb_cable_notify_register(struct usb_cable_notify *ucn)
     runner->next=ucn;
     }
   }
+EXPORT_SYMBOL(usb_cable_notify_register);
 
 void usb_cable_notify_unregister(struct usb_cable_notify *ucn)
   {
@@ -53,7 +54,7 @@ void usb_cable_notify_unregister(struct usb_cable_notify *ucn)
       }
     }
   }
-
+EXPORT_SYMBOL(usb_cable_notify_unregister);
 
 int s3c_usb_cable(int connected)
   {

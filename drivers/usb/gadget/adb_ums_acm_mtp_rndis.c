@@ -569,11 +569,11 @@ int currentusbstatus=0;
 int oldusbstatus=0;
 int UmsCDEnable=0;
 int ums_mount_status = 0;
-int askonstatus = 0;
+extern int askonstatus; // this has been moved to fsa9480_i2c.c
 int inaskonstatus=0;
 static int prev_status_before_adb;  // previous USB setting before using ADB
 static int prev_enable_status;  // previous USB setting
-extern int mtp_mode_on;
+extern int mtp_mode_on; // this has been moved to fsa9480_i2c.c
 
 static void enable_adb(struct android_dev *dev, int enable)
 {

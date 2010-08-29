@@ -159,7 +159,11 @@ static void set_max_pktsize(struct s3c_udc *dev, enum usb_device_speed speed);
 static void nuke(struct s3c_ep *ep, int status);
 static int s3c_udc_set_halt(struct usb_ep *_ep, int value);
 static void udc_reinit(struct s3c_udc *dev);
-extern int BOOTUP = 1; // Booting ������ �ƴ��� �Ǵ��ϴ� ����, connectivity_switching_init �� �Ҹ� �Ŀ� 0�� ����.
+extern int BOOTUP; // Booting ������ �ƴ��� �Ǵ��ϴ� ����, connectivity_switching_init �� �Ҹ� �Ŀ� 0�� ����.
+
+
+extern void usb_cable_notify_register(struct usb_cable_notify *ucn);
+extern void usb_cable_notify_unregister(struct usb_cable_notify *ucn);
 
 
 
