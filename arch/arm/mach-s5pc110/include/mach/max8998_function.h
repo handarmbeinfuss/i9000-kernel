@@ -16,7 +16,7 @@ typedef  unsigned char     boolean;         /* Unsigned 8  bit value type. */
 #endif
 
 /*
-Max8998Àº SRAD pinÀÇ »óÅÂ¿¡ µû¶ó¼­ PM partÀÇ slave address°¡ ¼³Á¤ÀÌ µË´Ï´Ù.
+Max8998ï¿½ SRAD pinï¿½ï¿½ ï¿½ï¿½ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ PM partï¿½ï¿½ slave addressï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë´Ï´ï¿½.
 PM part Slave address = 0xAC (SRAD = 1)
 PM part Slave address = 0xBC (SRAD = floating)
 PM part Slave address = 0xCC (SRAD = 0)
@@ -1768,5 +1768,26 @@ unsigned int max8998_poweron_reason(void);
 unsigned char maxim_vf_status(void);
 void boot_charging_full_charging_clear(void);
 void maxim_charging_control(unsigned int dev_type  , unsigned int cmd, int uicharging);
+
+// what follows has been added by rtm to provide a modularizable interface
+// that seperates all the usb-client stuff from the rest of the kernel
+
+
+typedef struct t_maxusb_function {
+  int kind;
+  void (*afunc)(void *data);
+  struct t_maxusb_function *next;
+  } maxusb_function;
+
+void register_muf(maxusb_function *amuf);
+void unregister_muf(maxusb_function *amuf);
+
+
+#define mufMAXIM_VAC_CONNECT_FUNC 1
+#define mufMAXIM_CHG_STATUS_FUNC 2
+#define mufSET_MTA0 3
+#define mufMACIM_CHARGING_CONTROL 4
+#define mufFSA9480_GET_JIG_STATUS 5
+#define mufLOG_VIA_USB 6
 
 #endif  // MAX8998

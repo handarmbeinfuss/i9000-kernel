@@ -50,7 +50,7 @@ extern void maxim_topoff_change(void);
 extern unsigned char maxim_chg_status(void);
 extern unsigned char maxim_charging_enable_status(void);
 extern unsigned char maxim_vf_status(void);
-extern u8 FSA9480_Get_JIG_Status(void);
+extern u8 FSA9480_Get_JIG_Status_wrap(void);
 extern void set_low_bat_interrupt(int on);
 
 #ifdef __TEST_DEVICE_DRIVER__
@@ -534,6 +534,7 @@ unsigned int charging_mode_get(void)
 {
 	return s3c_bat_info.charging_mode_booting;
 }
+EXPORT_SYMBOL(charging_mode_get);
 #endif
 
 
@@ -1306,7 +1307,7 @@ static unsigned int s3c_bat_check_v_f(void)
 {
 	unsigned int ret = 0;
 	
-	if( maxim_vf_status() || FSA9480_Get_JIG_Status() )	// bat detected
+	if( maxim_vf_status() || FSA9480_Get_JIG_Status_wrap() )	// bat detected
 	{
 		ret = 1;
 	}

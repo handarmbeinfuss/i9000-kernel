@@ -28,7 +28,7 @@ extern int inaskonstatus;
 extern int BOOTUP;
 
 int mtp_mode_on = 0;
-
+EXPORT_SYMBOL(mtp_mode_on);
 
 
 #define FSA9480_UART 	1
@@ -43,6 +43,7 @@ static u8 MicroJigUSBOnStatus=0;
 static u8 MicroJigUSBOffStatus=0;
 static u8 MicroJigUARTOffStatus=0;
 u8 MicroTAstatus=0;
+EXPORT_SYMBOL(MicroTAstatus);
 
 
 #define FSA9480UCX		0x4A
@@ -70,11 +71,13 @@ static u8 fsa9480_device1 = 0, fsa9480_device2 = 0, fsa9480_adc = 0;
 
 static struct i2c_client fsa9480_i2c_client;
 struct i2c_driver fsa9480_i2c_driver;
+EXPORT_SYMBOL(fsa9480_i2c_driver);
 
 int usb_path = 0;
 static int usb_power = 2;
 static int usb_state = 0;
 int log_via_usb = log_usb_disable; //denis
+EXPORT_SYMBOL(log_via_usb);
 
 
 static u8 testvalue=0;
@@ -997,6 +1000,7 @@ int  FSA9480_PMIC_CP_USB(void)
 	return usb_sel;
 
 }
+EXPORT_SYMBOL(FSA9480_PMIC_CP_USB);
 
 int check_reg=0;
 extern unsigned int HWREV;

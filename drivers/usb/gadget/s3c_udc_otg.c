@@ -156,8 +156,8 @@ static void set_max_pktsize(struct s3c_udc *dev, enum usb_device_speed speed);
 static void nuke(struct s3c_ep *ep, int status);
 static int s3c_udc_set_halt(struct usb_ep *_ep, int value);
 static void udc_reinit(struct s3c_udc *dev);
-int BOOTUP = 1; // Booting ÁßÀÎÁö ¾Æ´ÑÁö ÆÇ´ÜÇÏ´Â º¯¼ö, connectivity_switching_init ÀÌ ºÒ¸° ÈÄ¿¡ 0·Î ¼¼ÆÃ.
-
+int BOOTUP = 1; // Booting ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½, connectivity_switching_init ï¿½ï¿½ ï¿½Ò¸ï¿½ ï¿½Ä¿ï¿½ 0ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+EXPORT_SYMBOL(BOOTUP);
 
 
 static struct usb_ep_ops s3c_ep_ops = {
@@ -1092,7 +1092,7 @@ static struct s3c_udc memory = {
  * 	probe - binds to the platform device
  */
 
-extern struct i2c_driver fsa9480_i2c_driver;
+// extern struct i2c_driver fsa9480_i2c_driver;
 
 static int s3c_udc_probe(struct platform_device *pdev)
 {
@@ -1101,9 +1101,9 @@ static int s3c_udc_probe(struct platform_device *pdev)
 
 	DEBUG("%s: %p\n", __FUNCTION__, pdev);
 
-	retval = i2c_add_driver(&fsa9480_i2c_driver);
-	if (retval != 0)
-		printk("[USB Switch] can't add i2c driver");	
+// 	retval = i2c_add_driver(&fsa9480_i2c_driver);
+// 	if (retval != 0)
+// 		printk("[USB Switch] can't add i2c driver");	
 
 	spin_lock_init(&dev->lock);
 	dev->dev = pdev;

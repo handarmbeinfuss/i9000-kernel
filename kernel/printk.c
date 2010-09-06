@@ -57,7 +57,7 @@ extern void printascii(char *);
 #define MINIMUM_CONSOLE_LOGLEVEL 1 /* Minimum loglevel we let people use */
 #define DEFAULT_CONSOLE_LOGLEVEL 7 /* anything MORE serious than KERN_DEBUG */
 
-extern int log_via_usb; 
+extern int get_log_via_usb(void); 
 
 
 DECLARE_WAIT_QUEUE_HEAD(log_wait);
@@ -646,7 +646,7 @@ asmlinkage int printk(const char *fmt, ...)
 	int old_fs = get_fs();
 	set_fs(KERNEL_DS);
 
-	if(log_via_usb == log_usb_active)
+	if(get_log_via_usb() == log_usb_active)
 		{
 		va_start(args, fmt);
 //		buff_len_usb = vsprintf(buff, fmt, args);

@@ -154,6 +154,7 @@ void vps_status_change(int status)
 
 	switch_set_state(&switch_jack_detection, current_jack_type_status);
 }
+EXPORT_SYMBOL(vps_status_change);
 
 void car_vps_status_change(int status)
 {
@@ -165,6 +166,7 @@ void car_vps_status_change(int status)
 
 	switch_set_state(&switch_jack_detection, current_jack_type_status);
 }
+EXPORT_SYMBOL(car_vps_status_change);
 
 static int jack_type_detect_change(struct work_struct *ignored)
 {

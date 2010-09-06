@@ -26,7 +26,7 @@
 #define PMIC_SYS_DONE	0x5a5a	
 #define PMIC_INT_PEND 	0xE0200F40
 
-extern u8 FSA9480_Get_I2C_USB_Status(void);
+// extern u8 FSA9480_Get_I2C_USB_Status(void);
 irqreturn_t pmic_irq(int irq, void *dev_id);
 void MAX8998_PM_IRQ_isr();
 void s3c_cable_changed(void);
@@ -39,8 +39,9 @@ unsigned int charging_mode_get(void);
 unsigned char maxim_lpm_chg_status(void);
 void maxim_batt_check(void);
 
-extern u8 MicroTAstatus;
+// extern u8 MicroTAstatus;
 charging_device_type curent_device_type=PM_CHARGER_NULL;
+EXPORT_SYMBOL(curent_device_type);
 static maxim_rtc_display_type  pm_app_rtc_current_display_mode = MAXIM_RTC_24HR_MODE;
 static	void	__iomem		*pmic_int_mem;
 struct workqueue_struct *pmic_int_wq;
@@ -1131,6 +1132,7 @@ boolean Set_MAX8998_PM_ADDR(byte reg_addr, byte *reg_buff, byte length)
 
 	return TRUE;
 }
+EXPORT_SYMBOL(Set_MAX8998_PM_ADDR);
 
 /*===========================================================================
 
@@ -1170,6 +1172,7 @@ boolean Get_MAX8998_PM_ADDR(byte reg_addr, byte *reg_buff, byte length)
 
 	return TRUE;
 }
+EXPORT_SYMBOL(Get_MAX8998_PM_ADDR);
 
 /*===========================================================================
 
@@ -2828,10 +2831,66 @@ void camera_ldo_control(unsigned char onoff)
 
 }
 
+static maxusb_function *mu_chain=NULL;
+
+void register_muf(maxusb_function *amuf)
+  {
+  maxusb_function *link=mu_chain;
+  printk("registering %d\n",amuf->kind);
+  if (link==NULL)
+    {
+    mu_chain=amuf;
+    }
+  else
+    {
+    while (link->next!=NULL)
+      {
+      link=link->next;
+      }
+    link->next=amuf;
+    amuf->next=NULL;
+    }
+  }
+EXPORT_SYMBOL(register_muf);
+
+void unregister_muf(maxusb_function *amuf)
+  {
+  maxusb_function *link=mu_chain;
+  if (link==amuf)
+    {
+    mu_chain=amuf->next;
+    }
+  else
+    {
+    while ((link->next!=NULL) && (link->next!=amuf))
+      {
+      link=link->next;
+      }
+    if (link->next==amuf)
+      {
+      link->next=link->next->next;
+      }
+    }
+  }
+EXPORT_SYMBOL(unregister_muf);
+
+void call_muf(int what,void *data)
+  {
+  maxusb_function *link=mu_chain;
+  while (link!=NULL)
+    {
+    if (link->kind==what)
+      {
+      link->afunc(data);
+      }
+    link=link->next;
+    }
+  }
+
 extern int set_tsp_for_ta_detect(int state);
 void maxim_vac_connect(void)
 {
-	u8 UsbStatus=0;
+// 	u8 UsbStatus=0;
 
 	//printk("maxim_vac_connect \n");
 
@@ -2839,17 +2898,18 @@ void maxim_vac_connect(void)
 	{
 		if(curent_device_type == PM_CHARGER_NULL)
 		{
-			UsbStatus = FSA9480_Get_I2C_USB_Status();
-			if(UsbStatus){
-				//printk("maxim_USB_connect~~~ \n");
-				curent_device_type = PM_CHARGER_USB_INSERT;
-			}
-			else{
-				//printk("maxim_TA_connect~~~ \n");
-				curent_device_type = PM_CHARGER_TA;
-				MicroTAstatus = 1;
-				set_tsp_for_ta_detect(1);
-			}
+		call_muf(mufMAXIM_VAC_CONNECT_FUNC,NULL);
+// 			UsbStatus = FSA9480_Get_I2C_USB_Status();
+// 			if(UsbStatus){
+// 				//printk("maxim_USB_connect~~~ \n");
+// 				curent_device_type = PM_CHARGER_USB_INSERT;
+// 			}
+// 			else{
+// 				//printk("maxim_TA_connect~~~ \n");
+// 				curent_device_type = PM_CHARGER_TA;
+// 				MicroTAstatus = 1;
+// 				set_tsp_for_ta_detect(1);
+// 			}
 			s3c_cable_changed();
 		}
 	}
@@ -2874,7 +2934,8 @@ void maxim_vac_disconnect(void)
 		if(curent_device_type == PM_CHARGER_TA)
 			set_tsp_for_ta_detect(0);
 
-		MicroTAstatus = 0;
+    call_muf(mufSET_MTA0,NULL);
+// 		MicroTAstatus = 0;
 		s3c_cable_changed();
 		curent_device_type = PM_CHARGER_NULL;
 		
@@ -2940,15 +3001,16 @@ void maxim_low_battery_1st(void) // 3.57V
 unsigned char maxim_chg_status(void)
 {
 	if(Get_MAX8998_PM_REG(VDCINOK_status)){
-		if(FSA9480_Get_I2C_USB_Status()){
-			//printk("maxim_USB_connect~~~ \n");
-			curent_device_type = PM_CHARGER_USB_INSERT;
-		}
-		else{
-			//printk("maxim_TA_connect~~~ \n");
-			curent_device_type = PM_CHARGER_TA;
-			MicroTAstatus = 1;
-		}
+	  call_muf(mufMAXIM_CHG_STATUS_FUNC,NULL);
+// 		if(FSA9480_Get_I2C_USB_Status()){
+// 			//printk("maxim_USB_connect~~~ \n");
+// 			curent_device_type = PM_CHARGER_USB_INSERT;
+// 		}
+// 		else{
+// 			//printk("maxim_TA_connect~~~ \n");
+// 			curent_device_type = PM_CHARGER_TA;
+// 			MicroTAstatus = 1;
+// 		}
 		return 1;
 	}
 	else
@@ -3015,9 +3077,9 @@ unsigned int max8998_poweron_reason(void)
 
 }
 
-extern int  FSA9480_PMIC_CP_USB(void);
-extern int askonstatus;
-extern int mtp_mode_on;
+// extern int  FSA9480_PMIC_CP_USB(void);
+// extern int askonstatus;
+// extern int mtp_mode_on;
 
 void maxim_charging_control(unsigned int dev_type  , unsigned int cmd, int uicharging)
 {
@@ -3041,26 +3103,27 @@ void maxim_charging_control(unsigned int dev_type  , unsigned int cmd, int uicha
 	}
 	else if(dev_type==PM_CHARGER_USB_INSERT)
 	{	
-		value = FSA9480_PMIC_CP_USB();
-		if(uicharging)
-			reg_buff[0] = (0x1<<5) |(0x3 << 3) |(0x2<<0) ; // CHG_TOPOFF_TH=15%, CHG_RST_HYS=disable, AC_FCGH= 475mA
-		else
-			reg_buff[0] = (0x3 <<5) |(0x3 << 3) |(0x2<<0) ; // CHG_TOPOFF_TH=25%, CHG_RST_HYS=disable, AC_FCGH= 475mA
-		if(value)
-		{
-			if (askonstatus||mtp_mode_on){
-				reg_buff[1] = (0x1<<6) |(0x2<<4) | (0x0<<3) | (0x0<<1) | (0x0<<0); //ESAFEOUT1,2= 01, FCHG_TMR=7Hr, MBAT_REG_TH=4.2V, MBATT_THERM_REG=105C
-				printk("[Max8998_function]AP USB Power OFF, askon: %d, mtp : %d\n",askonstatus,mtp_mode_on);
-				}
-			else{
-				reg_buff[1] = (0x2<<6) |(0x2<<4) | (0x0<<3) | (0x0<<1) | (0x0<<0); //ESAFEOUT1,2= 10, FCHG_TMR=7Hr, MBAT_REG_TH=4.2V, MBATT_THERM_REG=105C
-				printk("[Max8998_function]AP USB Power ON, askon: %d, mtp : %d\n",askonstatus,mtp_mode_on);
-				}
-		}
-		else
-			reg_buff[1] = (0x2<<5) |(0x2<<4) | (0x0<<3) | (0x0<<1) | (0x0<<0); //ESAFEOUT1,2= 01, FCHG_TMR=7Hr, MBAT_REG_TH=4.2V, MBATT_THERM_REG=105C
-			
-		Set_MAX8998_PM_ADDR(CHGR1, reg_buff, 2); 
+	call_muf(mufMACIM_CHARGING_CONTROL,&uicharging);
+// 		value = FSA9480_PMIC_CP_USB();
+// 		if(uicharging)
+// 			reg_buff[0] = (0x1<<5) |(0x3 << 3) |(0x2<<0) ; // CHG_TOPOFF_TH=15%, CHG_RST_HYS=disable, AC_FCGH= 475mA
+// 		else
+// 			reg_buff[0] = (0x3 <<5) |(0x3 << 3) |(0x2<<0) ; // CHG_TOPOFF_TH=25%, CHG_RST_HYS=disable, AC_FCGH= 475mA
+// 		if(value)
+// 		{
+// 			if (askonstatus||mtp_mode_on){
+// 				reg_buff[1] = (0x1<<6) |(0x2<<4) | (0x0<<3) | (0x0<<1) | (0x0<<0); //ESAFEOUT1,2= 01, FCHG_TMR=7Hr, MBAT_REG_TH=4.2V, MBATT_THERM_REG=105C
+// 				printk("[Max8998_function]AP USB Power OFF, askon: %d, mtp : %d\n",askonstatus,mtp_mode_on);
+// 				}
+// 			else{
+// 				reg_buff[1] = (0x2<<6) |(0x2<<4) | (0x0<<3) | (0x0<<1) | (0x0<<0); //ESAFEOUT1,2= 10, FCHG_TMR=7Hr, MBAT_REG_TH=4.2V, MBATT_THERM_REG=105C
+// 				printk("[Max8998_function]AP USB Power ON, askon: %d, mtp : %d\n",askonstatus,mtp_mode_on);
+// 				}
+// 		}
+// 		else
+// 			reg_buff[1] = (0x2<<5) |(0x2<<4) | (0x0<<3) | (0x0<<1) | (0x0<<0); //ESAFEOUT1,2= 01, FCHG_TMR=7Hr, MBAT_REG_TH=4.2V, MBATT_THERM_REG=105C
+// 			
+// 		Set_MAX8998_PM_ADDR(CHGR1, reg_buff, 2); 
 		//printk("%s USB charging enable \n",__func__);
 	}
 	else
@@ -3091,3 +3154,25 @@ int pm_get_sys_init_status(void)
 {
 	return pm_sys_start;
 }
+
+u8 FSA9480_Get_JIG_Status_wrap(void)
+{
+ u8 i=0;
+ call_muf(mufFSA9480_GET_JIG_STATUS,&i);
+ return i;
+}
+
+// this is from drivers/usb/gadget/fsa9480_i2c.c
+// maybe find a good way to include it here
+#define log_usb_disable 	0
+#define log_usb_enable 		1
+#define log_usb_active		2
+
+
+int get_log_via_usb(void)
+  {
+  int i=log_usb_disable;
+  call_muf(mufLOG_VIA_USB,&i);
+  return i;
+  }
+

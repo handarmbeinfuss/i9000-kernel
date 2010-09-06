@@ -17,6 +17,7 @@
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/fs.h>
+#include <linux/i2c.h>
 
 #include <linux/delay.h>
 #include <linux/kernel.h>
@@ -570,6 +571,7 @@ int oldusbstatus=0;
 int UmsCDEnable=0;
 int ums_mount_status = 0;
 int askonstatus = 0;
+EXPORT_SYMBOL(askonstatus);
 int inaskonstatus=0;
 static int prev_status_before_adb;  // previous USB setting before using ADB
 static int prev_enable_status;  // previous USB setting
@@ -960,10 +962,19 @@ static struct platform_driver android_platform_driver = {
 	.probe = android_probe,
 };
 
+extern struct i2c_driver fsa9480_i2c_driver;
+
+
 static int __init init(void)
 {
 	struct android_dev *dev;
 	int ret;
+	int retval;
+
+	retval = i2c_add_driver(&fsa9480_i2c_driver);
+	if (retval != 0)
+		printk("[USB Switch] can't add i2c driver");	
+
 
 	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
 	if (!dev)
@@ -1016,5 +1027,6 @@ static void __exit cleanup(void)
 	kfree(_android_dev);
 	_android_dev = NULL;
 	gserial_cleanup();
+	i2c_del_driver(&fsa9480_i2c_driver);
 }
 module_exit(cleanup);

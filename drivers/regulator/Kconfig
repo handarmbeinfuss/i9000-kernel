@@ -71,6 +71,16 @@ config REGULATOR_MAX8998
           for S5PC1XX chips to control VCC_CORE and VCC_USIM voltages.
 
 
+config REGULATOR_MAX8998_usbstuff
+        tristate "Maxim 8998 voltage regulator usb dependent stuff"
+        depends on I2C && (MACH_S5PC110_JUPITER || MACH_S5PC110_P1P2)
+        default n
+        help
+          This driver controls a Maxim 8998 voltage output
+          regulator via emulated gpio I2C . The provided regulator is suitable
+          for S5PC1XX chips to control VCC_CORE and VCC_USIM voltages.
+
+
 config REGULATOR_WM8350
 	tristate "Wolfson Microelectroncis WM8350 AudioPlus PMIC"
 	depends on MFD_WM8350
