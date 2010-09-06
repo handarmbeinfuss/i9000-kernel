@@ -1,0 +1,5 @@
+config USB_S3C_OTG_HOST
+	tristate "Samsung OTG Host Controller support"
+	depends on USB
+	help
+	  This driver enables support for the S3C OTG Host Controller support

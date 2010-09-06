@@ -37,17 +37,17 @@ extern "C"
 #include "s3c-otg-common-common.h"
 #include "s3c-otg-hcdi-debug.h"
 
-#if defined(__linux__)
+//#if defined(__linux__)
 
 #include <linux/list.h>
 
 typedef   struct  list_head    otg_list_head;
 
-#else
+//#else
 
-#error Not supported OS
+//#error Not supported OS
 
-#endif
+//#endif
 
 #define	otg_list_get_node(ptr, type, member) container_of(ptr, type, member)
 

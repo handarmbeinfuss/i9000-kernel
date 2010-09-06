@@ -14,6 +14,7 @@ fhci-objs += fhci-dbg.o
 endif
 
 obj-$(CONFIG_USB_WHCI_HCD)	+= whci/
+obj-$(CONFIG_USB_S3C_OTG_HOST)	+= s3c-otg/
 
 obj-$(CONFIG_PCI)		+= pci-quirks.o
 

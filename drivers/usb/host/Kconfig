@@ -352,3 +352,5 @@ config USB_HWA_HCD
 
 	  To compile this driver a module, choose M here: the module
 	  will be called "hwa-hc".
+
+source "drivers/usb/host/s3c-otg/Kconfig"
