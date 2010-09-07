@@ -1,5 +1,14 @@
 config USB_S3C_OTG_HOST
 	tristate "Samsung OTG Host Controller support"
-	depends on USB
+	depends on USB && (PLAT_S3C64XX || PLAT_S5PC1XX || PLAT_S5PC11X)
 	help
-	  This driver enables support for the S3C OTG Host Controller support
+	 Samsung's S3C64XX processors include high speed USB OTG2.0
+	 controller. It has 15 configurable endpoints, as well as
+	 endpoint zero (for control transfers).
+	
+	 This driver support only OTG Host role. If you want to use
+	 OTG Device role, select USB Gadget support and S3C OTG Device.
+	
+	 Say "y" to link the driver statically, or "m" to build a
+	 dynamically linked module called "s3c_otg_hcd" and force all
+	 drivers to also be dynamically linked.
