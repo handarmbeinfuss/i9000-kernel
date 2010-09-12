@@ -34,6 +34,8 @@ obj-$(CONFIG_MACH_S5PC110_P1P2)	+= mach-p1p2.o
 
 obj-$(CONFIG_MACH_S5PC110_JUPITER)	+= mach-jupiter.o	jupiter-rfkill.o   mach-jupiter-gps.o
 
+obj-$(CONFIG_MACH_S5PC110_JUPITER_USB)	+= mach-jupiter-usb.o
+
 #sec headset support
 obj-$(CONFIG_SEC_HEADSET)	+= sec_jack.o
 # LEDs support

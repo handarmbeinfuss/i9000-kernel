@@ -107,6 +107,14 @@ config	SMDKC110_BOARD
 
 endchoice
 
+config MACH_S5PC110_JUPITER_USB
+	tristate "Mach S5PC110 Jupiter Board USB phy"
+	depends on MACH_S5PC110_JUPITER
+	depends on USB_SUPPORT
+	help
+	  USB phy module for USB host
+
+
 choice
         prompt "Select JUPITER BOARD VERSION "
 config JUPITER_VER_B3
