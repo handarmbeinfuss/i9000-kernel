@@ -60,6 +60,9 @@ static LIST_HEAD(clocks);
  */
 DEFINE_SPINLOCK(clocks_lock);
 
+EXPORT_SYMBOL(clocks_lock);
+EXPORT_SYMBOL(clocks);
+
 /* enable and disable calls for use with the clk struct */
 
 static int clk_null_enable(struct clk *clk, int enable)

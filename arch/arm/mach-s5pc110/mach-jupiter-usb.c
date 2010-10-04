@@ -128,6 +128,8 @@ void usb_host_phy_init(void)
 {
    struct clk *otg_clk;
 
+
+   printk("usb_host_phy_init start\n");
    otg_clk = clk_get(NULL, "otg");
    clk_enable(otg_clk);
 
@@ -145,6 +147,7 @@ void usb_host_phy_init(void)
    udelay(10);
    writel(readl(S3C_USBOTG_RSTCON)&~(0x1<<4)&~(0x1<<3), S3C_USBOTG_RSTCON);
    udelay(10);
+   printk("usb_host_phy_init end\n");
 }
 EXPORT_SYMBOL(usb_host_phy_init);
 
